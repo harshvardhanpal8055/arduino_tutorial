@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arduino Tutorial Course</title>
+  <!-- Font Awesome CDN for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+      background-color: #f5f5f5;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 20%;
+      background: #2d2f36;
+      color: white;
+      padding: 15px;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+    .sidebar h2 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+    .sidebar ul li {
+      padding: 8px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .sidebar ul li:hover {
+      background: #444654;
+    }
+
+    /* Main content */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 15px;
+      box-sizing: border-box;
+    }
+
+    /* Video Section */
+    .video {
+      height: 35%;
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .video iframe {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Content Area */
+    .content {
+      flex: 1;
+      display: flex;
+      gap: 10px;
+    }
+
+    .literature, .code, .circuit {
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      overflow-y: auto;
+    }
+
+    .literature { flex: 1; }
+    .code { flex: 1; font-family: "Courier New", monospace; background: #f8f8f8; border-left: 3px solid #007acc; }
+    .circuit { flex: 1; text-align: center; }
+    .circuit img { max-width: 100%; height: auto; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      body { flex-direction: column; height: auto; }
+      .sidebar { width: 100%; order: -1; text-align: center; }
+      .sidebar ul { display: flex; overflow-x: auto; white-space: nowrap; padding: 0; }
+      .sidebar ul li { flex: 1; min-width: 120px; background: #3a3d45; margin: 2px; }
+      .main { padding: 10px; }
+      .video { height: 200px; }
+      .content { flex-direction: column; }
+      .literature, .code, .circuit { flex: none; width: 100%; margin-bottom: 10px; }
+    }
+  </style>
+
+<script>
+window.onload = function() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const topic = urlParams.get('topic') || 'intro';
+  loadContent(topic);
+};
+</script>
+
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>Module 1: Introduction to Arduino</h2>
+    <ul>
+      <li onclick="loadContent('intro')">Intro</li>
+      <li onclick="loadContent('uno')">Applications</li>
+      <li onclick="loadContent('led')">Boards</li>
+      <li onclick="loadContent('sensors')">IDE</li>
+      <li onclick="loadContent('first_scetch')">First Sketch</li>
+      <li class="next-module" onclick="goToNextModule()">Next Module >></li>
+    </ul>
+<button id="shareBtn" style="align-self: flex-end; margin-bottom: 10px; padding: 8px 16px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+  <i class="fas fa-share-alt"></i> Share
+</button>
+
+<!-- Share Modal -->
+<div id="shareModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 999; justify-content: center; align-items: center;">
+  <div style="background: white; padding: 20px 30px; border-radius: 8px; display: flex; gap: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.2); flex-wrap: wrap;">
+    <a href="#" id="whatsappShare" target="_blank" title="WhatsApp">
+      <i class="fab fa-whatsapp fa-2x" style="color: #25D366;"></i>
+    </a>
+    <a href="#" id="facebookShare" target="_blank" title="Facebook">
+      <i class="fab fa-facebook fa-2x" style="color: #1877F2;"></i>
+    </a>
+    <a href="#" id="emailShare" target="_blank" title="Email">
+      <i class="fas fa-envelope fa-2x" style="color: #D44638;"></i>
+    </a>
+    <a href="#" id="snapchatShare" target="_blank" title="Snapchat">
+      <i class="fab fa-snapchat-ghost fa-2x" style="color: #FFFC00;"></i>
+    </a>
+    <a href="#" id="copyLink" title="Copy Link">
+      <i class="fas fa-link fa-2x" style="color: #333;"></i>
+    </a>
+  </div>
+</div>
+  </div>
+
+<script>
+  const shareBtn = document.getElementById("shareBtn");
+  const shareModal = document.getElementById("shareModal");
+
+  // Show modal
+  shareBtn.addEventListener("click", () => {
+    shareModal.style.display = "flex";
+  });
+
+  // Hide modal when clicking outside the popup
+  shareModal.addEventListener("click", (e) => {
+    if (e.target === shareModal) {
+      shareModal.style.display = "none";
+    }
+  });
+
+  // Page URL and Title
+  const pageUrl = encodeURIComponent(window.location.href);
+  const pageTitle = encodeURIComponent(document.title);
+
+  // Set share URLs
+  document.getElementById("whatsappShare").href = `https://wa.me/?text=${pageTitle}%0A${pageUrl}`;
+  document.getElementById("facebookShare").href = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
+  document.getElementById("emailShare").href = `mailto:?subject=${pageTitle}&body=Check this out: ${pageUrl}`;
+  document.getElementById("snapchatShare").href = `https://www.snapchat.com/scan?attachmentUrl=${pageUrl}`;
+
+  // Copy Link
+  document.getElementById("copyLink").addEventListener("click", (e) => {
+    e.preventDefault();
+    navigator.clipboard.writeText(window.location.href)
+      .then(() => alert("Link copied to clipboard!"))
+      .catch(() => alert("Failed to copy the link."));
+    shareModal.style.display = "none";
+  });
+
+  // Auto-close modal when a platform is selected
+  const shareLinks = document.querySelectorAll("#shareModal a:not(#copyLink)");
+  shareLinks.forEach(link => {
+    link.addEventListener("click", () => {
+      shareModal.style.display = "none";
+    });
+  });
+</script>
+
+<script>
+document.getElementById('shareBtn').addEventListener('click', function () {
+  const shareUrl = window.location.href;
+
+  if (navigator.share) {
+    navigator.share({
+      title: document.title,
+      text: "Check out this Arduino tutorial!",
+      url: shareUrl
+    })
+    .then(() => console.log('Thanks for sharing!'))
+    .catch(console.error);
+  } else {
+    // Fallback: Copy URL to clipboard
+    navigator.clipboard.writeText(shareUrl)
+      .then(() => alert("Link copied to clipboard!"))
+      .catch(() => alert("Failed to copy the link."));
+  }
+});
+</script>
+
+
+  <script>
+  function goToNextModule() {
+  window.location.href = 'module2.html'; // Adjust the path as needed
+  }
+
+  </script>
+
+<style>
+.sidebar ul {
+  padding: 0;
+  list-style: none;
+}
+
+.sidebar ul li {
+  height: 50px;
+  padding: 0 15px;
+  cursor: pointer;
+  transition: background 0.3s;
+  display: flex;
+  align-items: center;         /* Vertical center */
+  justify-content: flex-start; /* Left align text */
+}
+
+/* Hover effect for all items except button */
+.sidebar ul li:hover {
+  background-color: #f0f0f0;
+}
+
+/* Special styling for "Next Module" li */
+.sidebar ul li.next-module {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  border-radius: 4px;
+  /* Removed margin-top: 10px; */
+  justify-content: center;
+}
+
+
+/* Hover effect for "Next Module" */
+.sidebar ul li.next-module:hover {
+  background-color: #0056b3;
+}
+</style>
+
+  <!-- Main Section -->
+  <div class="main">
+
+    <!-- Video Section -->
+    <div class="video">
+      <iframe id="videoFrame" src="" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <!-- Content Section -->
+    <div class="content">
+
+      <!-- Literature -->
+      <div class="literature">
+        <h3>Topic Explanation</h3>
+        <p id="literatureText">Select a topic from the left menu to begin learning.</p>
+      </div>
+
+      <!-- Code -->
+      <div class="code">
+        <h3>Sample Code</h3>
+        <pre id="codeText">// Code will appear here</pre>
+      </div>
+
+      <!-- Circuit -->
+      <div class="circuit">
+        <h3>Circuit Diagram</h3>
+        <img id="circuitImg" src="" alt="Circuit Diagram">
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Data for each module
+    const topics = {
+      intro: {
+        video: "https://rumble.com/embed/v6xihvy/?pub=4nabmi", // sample video
+        literature: "🔹 1. What is Arduino?\n\nArduino is an open-source electronics platform based on easy-to-use hardware and software. It consists of a physical programmable circuit board (often called a microcontroller) and an Integrated Development Environment (IDE) that runs on your computer. Arduino allows anyone—from hobbyists to professionals—to create interactive electronic projects that sense and control the physical world.",
+        code: "// No code for Introduction",
+        circuit: "https://upload.wikimedia.org/wikipedia/commons/8/87/Arduino_Uno_-_R3.jpg"
+      },
+      uno: {
+        video: "https://atoplay.com/video/63829306-33a0-4897-8424-caadee7a27d1",
+        literature: "🔹 2. History and Applications\nArduino was created in 2005 by Massimo Banzi and his team at the Interaction Design Institute Ivrea in Italy. It was designed as an inexpensive, open-source platform for students and artists to build digital devices easily.\nApplications of Arduino include:\nHome automation systems\nWeather stations\nRobotics\nIoT devices\nEducational tools\nPrototyping of consumer electronics\nInteractive art installations\nIts open-source nature and simplicity helped it become one of the most popular platforms for learning embedded systems.",
+        code: "// Example setup for UNO\nvoid setup() {\n  pinMode(13, OUTPUT);\n}\n\nvoid loop() {\n  digitalWrite(13, HIGH);\n  delay(1000);\n  digitalWrite(13, LOW);\n  delay(1000);\n}",
+        circuit: "https://www.circuito.io/blog/wp-content/uploads/2016/11/blink-LED-arduino.png"
+      },
+      led: {
+        video: "https://www.youtube.com/embed/fCxzA9_kg6s",
+        literature: "🔹 3. Overview of Arduino Boards (Uno, Mega, Nano, etc.)\nThere are several types of Arduino boards tailored for different uses:\nArduino Uno: The most common and \nbeginner-friendly board; uses the ATmega328P microcontroller.\nArduino Mega 2560: Designed for more complex projects; has more memory and I/O pins.\nArduino Nano: A compact, breadboard-friendly board; good for space-constrained applications.\nArduino Leonardo: Can act as a mouse or keyboard when connected to a computer.\nArduino Due: A more powerful 32-bit board for advanced projects.\nArduino Pro Mini, Micro, and MKR series: Designed for specific applications like IoT, wearable devices, and low-power systems.",
+        code: "void setup() {\n  pinMode(13, OUTPUT);\n}\n\nvoid loop() {\n  digitalWrite(13, HIGH);\n  delay(500);\n  digitalWrite(13, LOW);\n  delay(500);\n}",
+        circuit: "https://www.circuito.io/blog/wp-content/uploads/2016/11/blink-LED-arduino.png"
+      },
+      sensors: {
+        video: "https://www.youtube.com/embed/WZ9A8rPIr2k",
+        literature: "🔹 4. Installing the Arduino IDE\nThe Arduino IDE (Integrated Development Environment) is the software used to write, compile, and upload code to your Arduino board.\nInstallation steps:\nGo to the official website: https://www.arduino.cc/en/software\nDownload the appropriate version for your OS (Windows, macOS, or Linux).\nInstall the software following the on-screen instructions.\nOnce installed, open the IDE. You can now write your first program, select the correct board and port, and upload code to your Arduino.",
+        code: "int sensorPin = A0;\nint sensorValue = 0;\n\nvoid setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  sensorValue = analogRead(sensorPin);\n  Serial.println(sensorValue);\n  delay(1000);\n}",
+        circuit: "https://www.arduino.cc/en/uploads/Tutorial/potentiometer_circuit.png"
+      },
+      first_scetch : {
+        video: "",
+        literature: "In Arduino programming, a program is called a “sketch.” The classic first sketch is the Blink program, which turns an LED on and off at regular intervals.",
+        code: "void setup() {\n  pinMode(13, OUTPUT); // Set digital pin 13 as output\n}\n\nvoid loop() {\n  digitalWrite(13, HIGH); // Turn the LED on\n  delay(1000);            // Wait for one second\n  digitalWrite(13, LOW);  // Turn the LED off\n  delay(1000);            // Wait for one second\n}",
+        circuit: ""
+      }
+    };
+
+  function loadContent(topic) {
+  document.getElementById("videoFrame").src = topics[topic].video;
+  document.getElementById("literatureText").innerText = topics[topic].literature;
+  document.getElementById("codeText").innerText = topics[topic].code;
+  document.getElementById("circuitImg").src = topics[topic].circuit;
+
+  // Update URL without reloading page
+  history.replaceState(null, '', '?topic=' + topic);
+}
+  </script>
+
+</body>
+</html>
