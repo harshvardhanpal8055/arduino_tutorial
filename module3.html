@@ -27,6 +27,8 @@ crossorigin="anonymous"></script>
       padding: 15px;
       box-sizing: border-box;
       overflow-y: auto;
+      min-width: 250px; /* ✅ Keep minimum readable width */
+      flex-shrink: 0;   /* ✅ Prevent flexbox from squeezing it */
     }
     .sidebar h2 {
       font-size: 18px;
@@ -157,15 +159,15 @@ window.onload = function() {
 
   <!-- Sidebar -->
   <div class="sidebar">
-    <h2>Module 2: Basic Electronics & Components</h2>
+    <h2>Module 3: Digital Inputs & Outputs</h2>
     <ul>
-      <li onclick="loadContent('voltage_current_resistance')">Voltage, current, resistance</li>
-      <li onclick="loadContent('ohm_s_law')">Ohm's Law</li>
-      <li onclick="loadContent('breadboard_usage')">Breadboard usage</li>
-      <li onclick="loadContent('resistors_capacitors_leds')">Resistors, capacitors, LEDs, push buttons, potentiometers</li>
-      <!--<li onclick="loadContent('first_scetch')">First Sketch</li> -->
-      <li class="next-module" onclick="goToNextModule()">Next Module >></li>
-      <li class="prevoius-module" onclick="goToPreviousModule()"><< Prevoius Module</li>
+        <li onclick="loadContent('voltage_current_resistance')">Digital output: Turning LEDs on/off</li>
+        <li onclick="loadContent('ohm_s_law')">Digital input: Reading buttons</li>
+        <li onclick="loadContent('breadboard_usage')">Debouncing techniques</li>
+        <li onclick="loadContent('resistors_capacitors_leds')">Using serial monitor for debugging</li>
+        <!--<li onclick="loadContent('first_scetch')">First Sketch</li> -->
+        <li class="next-module" onclick="goToNextModule()">Next Module >></li>
+        <li class="prevoius-module" onclick="goToPreviousModule()"><< Prevoius Module</li>
     </ul>
 <button id="shareBtn" style="align-self: flex-end; margin-bottom: 10px; padding: 8px 16px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
   <i class="fas fa-share-alt"></i> Share
@@ -261,14 +263,14 @@ document.getElementById('shareBtn').addEventListener('click', function () {
 
   <script>
   function goToNextModule() {
-  window.location.href = 'module3.html'; // Adjust the path as needed
+  window.location.href = 'module4.html'; // Adjust the path as needed
   }
 
   </script>
 
   <script>
   function goToPreviousModule() {
-  window.location.href = 'index.html'; // Adjust the path as needed
+  window.location.href = 'module2.html'; // Adjust the path as needed
   }
 
   </script>
@@ -362,72 +364,108 @@ document.getElementById('shareBtn').addEventListener('click', function () {
     const topics = {
       voltage_current_resistance: {
         video: "https://rumble.com/embed/v6xihvy/?pub=4nabmi", // sample video
-        literature: "🔹 1. Voltage, Current, Resistance\n\
-          These are the basic building blocks of electrical circuits:\n\n\
-          Voltage (V): The electrical \"pressure\" or potential difference that pushes electric charges through a circuit. Measured in volts (V).\n\n\
-          Think of it as the water pressure in a pipe.\n\n\
-          Current (I): The flow of electric charge through a conductor. Measured in amperes (A).\n\n\
-          Analogous to the amount of water flowing through the pipe.\n\n\
-          Resistance (R): The opposition to the flow of current in a circuit. Measured in ohms (Ω).\n\n\
-          Like a restriction in the pipe that slows the water flow.\n\n\
-          Understanding the relationship between these three is key to designing safe and functional circuits."
-          ,
-        code: "// No code for Voltage, current, resistance",
+        literature: "🔹 1. Digital Output: Turning LEDs On/Off\n\
+            A digital output means sending either a HIGH (5V) or LOW (0V) signal from an Arduino pin to control an external device.\n\n\
+            Common Use:\n\
+            Turning on/off an LED\n\
+            Controlling relays, buzzers, or other digital devices"
+            ,
+        code: "Basic Code Example:\n\n\
+            void setup() {\n\
+            pinMode(13, OUTPUT); // Set pin 13 as output\n\
+            }\n\n\
+            void loop() {\n\
+            digitalWrite(13, HIGH); // Turn LED on\n\
+            delay(1000);            // Wait 1 second\n\
+            digitalWrite(13, LOW);  // Turn LED off\n\
+            delay(1000);            // Wait 1 second\n\
+            }\n\n\
+            This code makes the built-in LED on pin 13 blink every second."
+            ,
         circuit: "https://upload.wikimedia.org/wikipedia/commons/8/87/Arduino_Uno_-_R3.jpg"
       },
       ohm_s_law: {
         video: "https://atoplay.com/video/63829306-33a0-4897-8424-caadee7a27d1",
-        literature: "🔹 2. Ohm’s Law\n\
-          Ohm’s Law is a fundamental formula in electronics that defines the relationship between voltage, current, and resistance:\n\n\
-          V = I × R\n\n\
-          Where:\n\
-          V = Voltage (Volts)\n\
-          I = Current (Amperes)\n\
-          R = Resistance (Ohms)\n\n\
-          Example: If you have a 9V battery and a 1kΩ resistor in a circuit:\n\
-          I = V / R = 9V / 1000Ω = 0.009A or 9mA\n\n\
-          This helps determine the correct resistor value to protect components like LEDs from too much current."
-          ,
-        code: "// No code for Ohm's Law",
+        literature: "🔹 2. Digital Input: Reading Buttons\n\
+            A digital input allows the Arduino to detect whether a pin is receiving HIGH (5V) or LOW (0V). A push button is often used as a basic input device.\n\n\
+            Wiring:\n\
+            One side of the button to a digital pin (e.g., pin 2)\n\
+            Other side to GND (with a pull-up resistor or using internal pull-up)"
+            ,
+        code: "Basic Code Example:\n\n\
+            void setup() {\n\
+            pinMode(2, INPUT_PULLUP); // Set pin 2 as input with internal pull-up resistor\n\
+            pinMode(13, OUTPUT);      // LED pin\n\
+            }\n\n\
+            void loop() {\n\
+            int buttonState = digitalRead(2); // Read the button state\n\n\
+            if (buttonState == LOW) { // Button is pressed (LOW due to pull-up)\n\
+                digitalWrite(13, HIGH); // Turn on LED\n\
+            } else {\n\
+                digitalWrite(13, LOW);  // Turn off LED\n\
+            }\n\
+            }\n\n\
+            Note: Using INPUT_PULLUP helps avoid using an external resistor."
+            ,
         circuit: "https://www.circuito.io/blog/wp-content/uploads/2016/11/blink-LED-arduino.png"
       },
       breadboard_usage: {
         video: "https://www.youtube.com/embed/fCxzA9_kg6s",
-        literature: "🔹 3. Breadboard Usage\n\
-          A breadboard is a reusable device used for building and testing electronic circuits without soldering. It has a grid of holes into which components and wires can be inserted.\n\n\
-          Power rails (along the sides) are for connecting power and ground.\n\n\
-          Terminal strips (in the middle) are used for placing and connecting components.\n\n\
-          It’s perfect for prototyping and experimenting with circuit designs.\n\n\
-          Note: Holes in each row are electrically connected, allowing components to share signals."
-          ,
-        code: "// No code for Breadboard usage",
+        literature: "🔹 3. Debouncing Techniques\n\
+            Debouncing is necessary when using mechanical buttons. When pressed, a button doesn't produce a clean on/off signal—it may bounce (flicker between HIGH and LOW) for a few milliseconds.\n\n\
+            Without debouncing, your program might interpret a single press as multiple presses."
+            ,
+        code: "Software Debouncing Example:\n\n\
+            int buttonPin = 2;\n\
+            int buttonState;\n\
+            int lastButtonState = HIGH;\n\
+            unsigned long lastDebounceTime = 0;\n\
+            unsigned long debounceDelay = 50;\n\n\
+            void setup() {\n\
+            pinMode(buttonPin, INPUT_PULLUP);\n\
+            Serial.begin(9600);\n\
+            }\n\n\
+            void loop() {\n\
+            int reading = digitalRead(buttonPin);\n\n\
+            if (reading != lastButtonState) {\n\
+                lastDebounceTime = millis();\n\
+            }\n\n\
+            if ((millis() - lastDebounceTime) > debounceDelay) {\n\
+                if (reading != buttonState) {\n\
+                buttonState = reading;\n\
+                if (buttonState == LOW) {\n\
+                    Serial.println(\"Button Pressed\");\n\
+                }\n\
+                }\n\
+            }\n\n\
+            lastButtonState = reading;\n\
+            }\n\n\
+            This code checks if the signal has remained stable for 50ms before confirming a press."
+            ,
         circuit: "https://www.circuito.io/blog/wp-content/uploads/2016/11/blink-LED-arduino.png"
       },
       resistors_capacitors_leds: {
         video: "https://www.youtube.com/embed/WZ9A8rPIr2k",
-        literature: "🔹 4. Resistors, Capacitors, LEDs, Push Buttons, Potentiometers\n\n\
-          Resistors\n\
-          Reduce current and divide voltage in a circuit.\n\
-          Color bands indicate resistance value (measured in ohms).\n\
-          Example: A 220Ω resistor is commonly used with LEDs to limit current.\n\n\
-          Capacitors\n\
-          Store and release electrical energy.\n\
-          Measured in farads (F).\n\
-          Used in filtering, timing circuits, and power smoothing.\n\
-          Types: Electrolytic (polarized), Ceramic (non-polarized)\n\n\
-          LEDs (Light Emitting Diodes)\n\
-          Emit light when current flows through them.\n\
-          Polarized component: longer leg is anode (+), shorter leg is cathode (–).\n\
-          Requires a resistor to prevent burning out due to excess current.\n\n\
-          Push Buttons\n\
-          Simple mechanical switches that open or close a circuit when pressed.\n\
-          Used as digital inputs to trigger actions in Arduino programs.\n\n\
-          Potentiometers\n\
-          Variable resistors with a rotating knob or slider.\n\
-          Used to adjust voltage levels (e.g., brightness or volume).\n\
-          Can be read using Arduino's analog input pins."
-          ,
-        code: "// No code for Resistors, Capacitors, LEDs, Push Buttons, Potentiometers",
+        literature: "🔹 4. Using Serial Monitor for Debugging\n\
+            The Serial Monitor is a tool in the Arduino IDE that lets you send and receive data between the Arduino and your computer via USB. It's incredibly useful for debugging and monitoring variables.\n\n\
+            How to Use:\n\
+            Call Serial.begin(9600); in setup() to start communication\n\
+            Use Serial.print() or Serial.println() to display data"
+            ,
+        code: "Example:\n\n\
+            void setup() {\n\
+            Serial.begin(9600);\n\
+            pinMode(2, INPUT_PULLUP);\n\
+            }\n\n\
+            void loop() {\n\
+            int buttonState = digitalRead(2);\n\
+            Serial.println(buttonState);\n\
+            delay(100);\n\
+            }\n\n\
+            This prints the button state to the Serial Monitor in real-time, helping you understand how the input behaves.\n\n\
+            To Open Serial Monitor:\n\
+            In Arduino IDE, go to Tools > Serial Monitor or press Ctrl + Shift + M"
+            ,
         circuit: "https://www.arduino.cc/en/uploads/Tutorial/potentiometer_circuit.png"
       }
     };

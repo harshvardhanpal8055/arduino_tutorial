@@ -238,11 +238,18 @@ document.getElementById('shareBtn').addEventListener('click', function () {
   display: flex;
   align-items: center;         /* Vertical center */
   justify-content: flex-start; /* Left align text */
+  
+}
+
+.sidebar ul li.selected {
+  background-color: #1a73e8; /* Highlight color */
+  color: white;
+  font-weight: bold;
 }
 
 /* Hover effect for all items except button */
 .sidebar ul li:hover {
-  background-color: #f0f0f0;
+  background-color: #0056b3;
 }
 
 /* Special styling for "Next Module" li */
@@ -306,19 +313,19 @@ document.getElementById('shareBtn').addEventListener('click', function () {
       uno: {
         video: "https://atoplay.com/video/63829306-33a0-4897-8424-caadee7a27d1",
         literature: "🔹 2. History and Applications\nArduino was created in 2005 by Massimo Banzi and his team at the Interaction Design Institute Ivrea in Italy. It was designed as an inexpensive, open-source platform for students and artists to build digital devices easily.\nApplications of Arduino include:\nHome automation systems\nWeather stations\nRobotics\nIoT devices\nEducational tools\nPrototyping of consumer electronics\nInteractive art installations\nIts open-source nature and simplicity helped it become one of the most popular platforms for learning embedded systems.",
-        code: "// Example setup for UNO\nvoid setup() {\n  pinMode(13, OUTPUT);\n}\n\nvoid loop() {\n  digitalWrite(13, HIGH);\n  delay(1000);\n  digitalWrite(13, LOW);\n  delay(1000);\n}",
+        code: "// No code for Applications",
         circuit: "https://www.circuito.io/blog/wp-content/uploads/2016/11/blink-LED-arduino.png"
       },
       led: {
         video: "https://www.youtube.com/embed/fCxzA9_kg6s",
         literature: "🔹 3. Overview of Arduino Boards (Uno, Mega, Nano, etc.)\nThere are several types of Arduino boards tailored for different uses:\nArduino Uno: The most common and \nbeginner-friendly board; uses the ATmega328P microcontroller.\nArduino Mega 2560: Designed for more complex projects; has more memory and I/O pins.\nArduino Nano: A compact, breadboard-friendly board; good for space-constrained applications.\nArduino Leonardo: Can act as a mouse or keyboard when connected to a computer.\nArduino Due: A more powerful 32-bit board for advanced projects.\nArduino Pro Mini, Micro, and MKR series: Designed for specific applications like IoT, wearable devices, and low-power systems.",
-        code: "void setup() {\n  pinMode(13, OUTPUT);\n}\n\nvoid loop() {\n  digitalWrite(13, HIGH);\n  delay(500);\n  digitalWrite(13, LOW);\n  delay(500);\n}",
+        code: "// No code for Boards",
         circuit: "https://www.circuito.io/blog/wp-content/uploads/2016/11/blink-LED-arduino.png"
       },
       sensors: {
         video: "https://www.youtube.com/embed/WZ9A8rPIr2k",
         literature: "🔹 4. Installing the Arduino IDE\nThe Arduino IDE (Integrated Development Environment) is the software used to write, compile, and upload code to your Arduino board.\nInstallation steps:\nGo to the official website: https://www.arduino.cc/en/software\nDownload the appropriate version for your OS (Windows, macOS, or Linux).\nInstall the software following the on-screen instructions.\nOnce installed, open the IDE. You can now write your first program, select the correct board and port, and upload code to your Arduino.",
-        code: "int sensorPin = A0;\nint sensorValue = 0;\n\nvoid setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  sensorValue = analogRead(sensorPin);\n  Serial.println(sensorValue);\n  delay(1000);\n}",
+        code: "// No code for IDE",
         circuit: "https://www.arduino.cc/en/uploads/Tutorial/potentiometer_circuit.png"
       },
       first_scetch : {
@@ -329,7 +336,7 @@ document.getElementById('shareBtn').addEventListener('click', function () {
       }
     };
 
-  function loadContent(topic) {
+function loadContent(topic) {
   document.getElementById("videoFrame").src = topics[topic].video;
   document.getElementById("literatureText").innerText = topics[topic].literature;
   document.getElementById("codeText").innerText = topics[topic].code;
@@ -337,7 +344,21 @@ document.getElementById('shareBtn').addEventListener('click', function () {
 
   // Update URL without reloading page
   history.replaceState(null, '', '?topic=' + topic);
+
+  // Highlight selected sidebar item
+  const sidebarItems = document.querySelectorAll('.sidebar ul li');
+
+  sidebarItems.forEach(item => {
+    // Remove 'selected' from all
+    item.classList.remove('selected');
+
+    // Highlight the one matching the current topic
+    if (item.getAttribute('onclick') === `loadContent('${topic}')`) {
+      item.classList.add('selected');
+    }
+  });
 }
+
   </script>
 
 </body>
